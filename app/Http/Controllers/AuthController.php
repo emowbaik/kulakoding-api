@@ -11,7 +11,9 @@ class AuthController extends Controller
 {
     function Register(Request $request) {
         $validation = Validator::make($request->all(), [
-           "" 
+           "username" => "required",
+           "email" => "required|email",
+           "password" => "required" 
         ]);
 
         if ($validation->fails()) {
@@ -35,7 +37,8 @@ class AuthController extends Controller
 
     function Login(Request $request) {
         $validation = Validator::make($request->all(), [
-            "" 
+            "email" => "required|email",
+            "password" => "required" 
          ]);
  
          if ($validation->fails()) {
@@ -46,7 +49,7 @@ class AuthController extends Controller
 
          if ($user) {
             if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken()->plainTextToken;
+                $token = $user->createToken("auth_token")->plainTextToken;
 
                 return response()->json([
                     "message" => "Login berhasil",

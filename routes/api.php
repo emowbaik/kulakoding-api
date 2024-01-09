@@ -29,10 +29,10 @@ Route::prefix("/v1")->group(function () {
     });
 
     Route::middleware("auth:sanctum")->group(function () {
-        Route::resource("/project", [ProjectController::class]);
+        Route::resource("/project", ProjectController::class);
 
         Route::prefix("/admin")->group(function (){
-            Route::resource("project", [AdminProjectController::class]);
+            Route::resource("project", AdminProjectController::class);
         });
     });
 });

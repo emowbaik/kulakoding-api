@@ -15,7 +15,7 @@ class ProjectController extends Controller
     function Index() {
         $user = Auth::user();
 
-        $project = Project::where("user_id". $user->id)->get();
+        $project = Project::where("user_id", $user->id)->get();
 
         return response()->json($project, 200);
     }
@@ -23,12 +23,21 @@ class ProjectController extends Controller
     function Show($id) {
         $project = Project::firstWhere("id", $id);
 
-        return response()->json($project, 200);
+        if ($project) {
+            return response()->json($project, 200);
+        } else {
+            return response()->json([
+                "message" => "Data tidak ditemukan"
+            ], 404);
+        }
+
     }
 
     function Store(Request $request) {
         $validation = Validator::make($request->all(), [
-            
+            "nama_project" => "required",
+            "image" => "required",
+            "deskripsi" => "required",
         ]);
 
         if ($validation->fails()) {
@@ -53,29 +62,48 @@ class ProjectController extends Controller
 
         $project = Project::create($payload);
 
+        $file->move($dir, $name);
+
         return response()->json([
             "message" => "Project berhasil diupload!"
         ], 201);
     }
 
     function Update($id, Request $request) {
+        $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
-        $project->update($request->all());
-        $project->save();
-
-        return response()->json([
-            "message" => "Data berhasil diupdate!"
-        ], 200);
+        if ($project->user_id == $user->id) {
+            $project->update([
+                "nama_project" => $request->nama_project,
+                "deskripsi" => $request->deskripsi
+            ]);
+            $project->save();
+    
+            return response()->json([
+                "message" => "Data berhasil diupdate!"
+            ], 200);
+        } else {
+            return response()->json([
+                "message" => "Anda tidak memiliki akses untuk mengubah data ini!"
+            ], 401);
+        }
     }
 
-    function Delete($id) {
+    function Destroy($id) {
+        $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
-        $project->delete();
-
-        return response()->json([
-            "message" => "Data berhasil dihapus"
-        ], 200);
+        if ($project->user_id == $user->id) {
+            $project->delete();
+    
+            return response()->json([
+                "message" => "Data berhasil dihapus"
+            ], 200);
+        } else {
+            return response()->json([
+                "message" => "Anda tidak memiliki akses untuk mengubah data ini!"
+            ], 401);
+        }
     }
 }
