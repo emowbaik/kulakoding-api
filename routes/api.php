@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ToolsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,7 @@ Route::prefix("/v1")->group(function () {
 
     Route::middleware("auth:sanctum")->group(function () {
         Route::resource("/project", ProjectController::class);
+        Route::resource("/tools", ToolsController::class);
 
         Route::prefix("/admin")->group(function (){
             Route::resource("project", AdminProjectController::class);

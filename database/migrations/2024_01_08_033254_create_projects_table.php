@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("user_id");
+            $table->unsignedBigInteger("tool_id");
             $table->string("nama_project");
             $table->text("image");
             $table->text("deskripsi");
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("user_id")->references("id")->on("users");
+            $table->foreign("tool_id")->references("id")->on("tools");
         });
     }
 

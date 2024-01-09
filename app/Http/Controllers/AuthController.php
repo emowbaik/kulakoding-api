@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,22 +10,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    function Register(Request $request) {
-        $validation = Validator::make($request->all(), [
-           "username" => "required",
-           "email" => "required|email",
-           "password" => "required" 
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json($validation->errors(), 401);
-        }
-
-        $payload = [
-            "username" => $request->username,
-            "email" => $request->email,
-            "password" => $request->password
-        ];
+    function Register(RegisterRequest $request) {
+        $payload = $request->validated();
 
         Hash::make($payload["password"]);
 

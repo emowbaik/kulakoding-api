@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -33,16 +34,8 @@ class ProjectController extends Controller
 
     }
 
-    function Store(Request $request) {
-        $validation = Validator::make($request->all(), [
-            "nama_project" => "required",
-            "image" => "required",
-            "deskripsi" => "required",
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json($validation->errors(), 401);
-        }
+    function Store(ProjectRequest $request) {
+        $payload = $request->validated();
 
         $user = Auth::user();
 
@@ -52,13 +45,8 @@ class ProjectController extends Controller
         $name = Str::random(32) . "." . $extension;
         $image = $dir . $name;
 
-        $payload = [
-            "user_id" => $user->id,
-            "nama_project" => $request->nama_project,
-            "image" => $image,
-            "deskripsi" => $request->deskripsi,
-            "github" => $request->github
-        ];
+        $payload["user_id"] = $user->id;
+        $payload["tool_id"] = $request->tools;
 
         $project = Project::create($payload);
 
@@ -69,15 +57,12 @@ class ProjectController extends Controller
         ], 201);
     }
 
-    function Update($id, Request $request) {
+    function Update($id, ProjectRequest $request) {
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
         if ($project->user_id == $user->id) {
-            $project->update([
-                "nama_project" => $request->nama_project,
-                "deskripsi" => $request->deskripsi
-            ]);
+            $project->update($request->validated());
             $project->save();
     
             return response()->json([
