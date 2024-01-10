@@ -17,14 +17,21 @@ class AuthController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return response()->json($validation->errors(), 401);
+            return response()->json($validation->errors(), 400);
         }
 
+        
         $payload = [
             "username" => $request->username,
             "email" => $request->email,
             "password" => $request->password
         ];
+
+        if (User::firstWhere("username", $payload["username"])) {
+            return response()->json([
+                "message" => "Akun sudah terdaftar"
+            ], 401);
+        }
 
         Hash::make($payload["password"]);
 

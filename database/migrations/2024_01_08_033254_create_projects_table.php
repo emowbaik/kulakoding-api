@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("user_id");
             $table->string("nama_project");
-            $table->text("image");
+            $table->text("image")->nullable();
             $table->text("deskripsi");
             $table->string("github")->nullable();
             $table->timestamps();

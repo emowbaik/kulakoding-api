@@ -36,7 +36,6 @@ class ProjectController extends Controller
     function Store(Request $request) {
         $validation = Validator::make($request->all(), [
             "nama_project" => "required",
-            "image" => "required",
             "deskripsi" => "required",
         ]);
 
@@ -47,22 +46,35 @@ class ProjectController extends Controller
         $user = Auth::user();
 
         $file = $request->file("image");
-        $extension = $file->extension();
-        $dir = "storage/project";
-        $name = Str::random(32) . "." . $extension;
-        $image = $dir . $name;
 
-        $payload = [
-            "user_id" => $user->id,
-            "nama_project" => $request->nama_project,
-            "image" => $image,
-            "deskripsi" => $request->deskripsi,
-            "github" => $request->github
-        ];
+        if ($file) {   
+            $extension = $file->extension();
+            $dir = "storage/project";
+            $name = Str::random(32) . "." . $extension;
+            $image = $dir . $name;
+            
+            $payload = [
+                "user_id" => $user->id,
+                "nama_project" => $request->nama_project,
+                "image" => $image,
+                "deskripsi" => $request->deskripsi,
+                "github" => $request->github
+            ];
+
+        $file->move($dir, $name);
+
+        } else {
+            $payload = [
+                "user_id" => $user->id,
+                "nama_project" => $request->nama_project,
+                "deskripsi" => $request->deskripsi,
+                "github" => $request->github
+            ];
+
+        }
 
         $project = Project::create($payload);
 
-        $file->move($dir, $name);
 
         return response()->json([
             "message" => "Project berhasil diupload!"
