@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ Route::prefix("/v1")->group(function () {
 
         Route::prefix("/admin")->group(function (){
             Route::resource("project", AdminProjectController::class);
+            Route::resource("user", UserController::class);
         });
     });
 });
