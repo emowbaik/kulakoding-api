@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('komentars', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("user_id");
-            $table->unsignedBigInteger("tool_id");
-            $table->string("nama_project");
-            $table->text("deskripsi");
-            $table->string("github")->nullable();
+            $table->unsignedBigInteger("project_id");
+            $table->text("komentar");
             $table->timestamps();
 
             $table->foreign("user_id")->references("id")->on("users");
-            $table->foreign("tool_id")->references("id")->on("tools");
+            $table->foreign("project_id")->references("id")->on("projects");
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('komentars');
     }
 };
