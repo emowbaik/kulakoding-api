@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Komentar;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -85,20 +86,26 @@ class ProjectController extends Controller
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
-        if ($project->user_id == $user->id) {
-            $project->update([
-                "nama_project" => $request->nama_project,
-                "deskripsi" => $request->deskripsi
-            ]);
-            $project->save();
-    
-            return response()->json([
-                "message" => "Data berhasil diupdate!"
-            ], 200);
+
+        if ($project) {
+            if ($project->user_id == $user->id) {
+                // $project->update([
+                //     "nama_project" => $request->nama_project,
+                //     "deskripsi" => $request->deskripsi
+                // ]);
+                        
+                return response()->json([
+                    "message" => "Data berhasil diupdate!"
+                ], 200);
+            } else {
+                return response()->json([
+                    "message" => "Anda tidak memiliki akses untuk mengubah data ini!"
+                ], 401);
+            }
         } else {
             return response()->json([
-                "message" => "Anda tidak memiliki akses untuk mengubah data ini!"
-            ], 401);
+                "message" => "Data tidak ditemukan"
+            ], 404);
         }
     }
 
@@ -107,6 +114,8 @@ class ProjectController extends Controller
         $project = Project::firstWhere("id", $id);
 
         if ($project->user_id == $user->id) {
+            $komentar = Komentar::where("project_id", $id);
+            $komentar->delete();
             $project->delete();
     
             return response()->json([

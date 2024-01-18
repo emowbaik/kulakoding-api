@@ -35,6 +35,7 @@ Route::prefix("/v1")->group(function () {
         Route::resource("/project", ProjectController::class);
         Route::post("/project/komentar/{id}", [KomentarController::class, "Store"]);
         Route::delete("/project/komentar/{id}/{komentar:id}", [KomentarController::class, "destroy"]);
+        Route::put("/project/{id}", [ProjectController::class, "Update"]);
 
         Route::prefix("/admin")->group(function (){
             Route::resource("project", AdminProjectController::class);

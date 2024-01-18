@@ -27,7 +27,7 @@ class AuthController extends Controller
             "password" => $request->password
         ];
 
-        if (User::firstWhere("username", $payload["username"])) {
+        if (User::firstWhere("email", $payload["email"])) {
             return response()->json([
                 "message" => "Akun sudah terdaftar"
             ], 401);
