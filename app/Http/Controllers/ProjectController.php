@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectRequest;
+use App\Models\Image;
 use App\Models\Komentar;
 use App\Models\Project;
 use App\Models\User;
@@ -39,27 +40,27 @@ class ProjectController extends Controller
 
         $user = Auth::user();
 
-        $file = $request->file("image");
+        $payload = $request->validated();
 
-        if ($file) {   
-            $extension = $file->extension();
-            $dir = "storage/project";
-            $name = Str::random(32) . "." . $extension;
-            $image = $dir . $name;
-
-            $payload = $request->validated();
-
-            $payload["user_id"] = $user->id;
-
-        $file->move($dir, $name);
-
-        } else {
-            $payload = $request->validated();
-
-            $payload["user_id"] = $user->id;
-        }
+        $payload["user_id"] = $user->id;
 
         $project = Project::create($payload);
+
+        $file = $request->file("image");
+
+        // foreach ($file as $image) {
+        //     $extension = $image->extension();
+        //     $dir = "storage/project";
+        //     $name = Str::random(32) . "." . $extension;
+        //     $images = $dir . $name;
+
+        //     $image->move($dir . $name);
+
+        //     Image::create([
+        //         "project_id" => $project->id,
+        //         "image" => $images 
+        //     ]);
+        // };
 
 
         return response()->json([
