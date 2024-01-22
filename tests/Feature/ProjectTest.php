@@ -9,7 +9,7 @@ use Tests\TestCase;
 class ProjectTest extends TestCase
 {
 
-    public $token = "4|j6lykgbq14WMPcbm978mHDZJxiqFtVbH5hjKOJ12cd3a0022";
+    public $token = "3|VknymWfmdilwLfjuHw81VsE3X19giJei3JCJPdAYd8f844fa";
     /**
      * A basic feature test example.
      */
@@ -32,7 +32,7 @@ class ProjectTest extends TestCase
             "nama_project" => "",
             "deskripsi" => ""
         ])
-        ->assertUnauthorized();
+        ->assertBadRequest();
     }
 
     function test_access_project_unauthorized() : void {

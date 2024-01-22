@@ -13,14 +13,17 @@ class AuthTest extends TestCase
      * A basic feature test example.
      */
     function test_register_success() {
+
+        $faker = \Faker\Factory::create();
+
         $this->post("/api/v1/auth/register", [
-            "username" => "farish",
-            "email" => "farish@gmail.com",
-            "password" => "farish"
+            "username" => $faker->name,
+            "email" => $faker->email(),
+            "password" => $faker->password()
         ])
         ->assertCreated();
 
-        DB::table('users')->where("username", "farish")->delete();
+        DB::table('users')->where("username", $faker->name)->delete();
     }
 
     function test_register_failed() {
@@ -43,8 +46,8 @@ class AuthTest extends TestCase
 
     function test_login_success() {
         $this->post("/api/v1/auth/login", [
-            "email" => "admin@gmail.com",
-            "password" => "admin"
+            "email" => "farish@gmail.com",
+            "password" => "farish"
         ])
         ->assertOk();
     }

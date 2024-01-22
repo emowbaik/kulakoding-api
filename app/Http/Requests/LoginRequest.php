@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
 
-class KomentarRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,8 @@ class KomentarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "komentar" => ["required"],
-            "user_id",
-            "project_id",
+            "email" => ["required", "email"],
+            "password" => ["required"],
         ];
     }
 
