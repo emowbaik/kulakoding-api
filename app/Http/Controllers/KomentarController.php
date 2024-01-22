@@ -25,15 +25,14 @@ class KomentarController extends Controller
         }
     }
 
-    function Store($id, Request $request) {
+    function Store($id, KomentarRequest $request) {
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
-        $payload = [
-            "user_id" => $user->id,
-            "project_id" => $project->id,
-            "komentar" => $request->komentar
-        ];
+        $payload = $request->validated();
+
+        $payload["user_id"] = $user->id;
+        $payload["project_id"] = $project->id;
 
         Komentar::create($payload);
 

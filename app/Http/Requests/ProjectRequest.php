@@ -22,7 +22,10 @@ class ProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            ""
+            "nama_project" => ["required"],
+            "deskripsi" => ["required"],
+            "user_id",
+            "tool_id"
         ];
     }
 }

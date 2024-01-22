@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectRequest;
 use App\Models\Komentar;
 use App\Models\Project;
 use App\Models\User;
@@ -34,15 +35,7 @@ class ProjectController extends Controller
 
     }
 
-    function Store(Request $request) {
-        $validation = Validator::make($request->all(), [
-            "nama_project" => "required",
-            "deskripsi" => "required",
-        ]);
-
-        if ($validation->fails()) {
-            return response()->json($validation->errors(), 401);
-        }
+    function Store(ProjectRequest $request) {
 
         $user = Auth::user();
 
@@ -53,25 +46,17 @@ class ProjectController extends Controller
             $dir = "storage/project";
             $name = Str::random(32) . "." . $extension;
             $image = $dir . $name;
-            
-            $payload = [
-                "user_id" => $user->id,
-                "nama_project" => $request->nama_project,
-                "image" => $image,
-                "deskripsi" => $request->deskripsi,
-                "github" => $request->github
-            ];
+
+            $payload = $request->validated();
+
+            $payload["user_id"] = $user->id;
 
         $file->move($dir, $name);
 
         } else {
-            $payload = [
-                "user_id" => $user->id,
-                "nama_project" => $request->nama_project,
-                "deskripsi" => $request->deskripsi,
-                "github" => $request->github
-            ];
+            $payload = $request->validated();
 
+            $payload["user_id"] = $user->id;
         }
 
         $project = Project::create($payload);
@@ -82,17 +67,16 @@ class ProjectController extends Controller
         ], 201);
     }
 
-    function Update($id, Request $request) {
+    function Update($id, ProjectRequest $request) {
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
+
+        $payload = $request->validated();
 
 
         if ($project) {
             if ($project->user_id == $user->id) {
-                // $project->update([
-                //     "nama_project" => $request->nama_project,
-                //     "deskripsi" => $request->deskripsi
-                // ]);
+                $project->update($payload);
                         
                 return response()->json([
                     "message" => "Data berhasil diupdate!"
