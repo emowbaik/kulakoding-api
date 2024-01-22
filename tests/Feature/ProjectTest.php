@@ -13,7 +13,7 @@ class ProjectTest extends TestCase
     /**
      * A basic feature test example.
      */
-    function test_create_project_success() : void {
+    function testCreateProjectSuccess() : void {
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
         ])
@@ -24,7 +24,7 @@ class ProjectTest extends TestCase
         ->assertCreated();
     }
 
-    function test_create_project_failed() : void {
+    function testCreateProjectFailed() : void {
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
         ])
@@ -35,7 +35,7 @@ class ProjectTest extends TestCase
         ->assertBadRequest();
     }
 
-    function test_access_project_unauthorized() : void {
+    function testCreateProjectUnauthorized() : void {
         $this->withHeaders([
             'Authorization' => 'Bearer ' . "baskdjaksda",
         ])

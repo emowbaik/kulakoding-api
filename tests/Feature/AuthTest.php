@@ -12,7 +12,7 @@ class AuthTest extends TestCase
     /**
      * A basic feature test example.
      */
-    function test_register_success() {
+    function testRegisterSuccess() {
 
         $faker = \Faker\Factory::create();
 
@@ -26,7 +26,7 @@ class AuthTest extends TestCase
         DB::table('users')->where("username", $faker->name)->delete();
     }
 
-    function test_register_failed() {
+    function testRegisterFailed() {
         $this->post("/api/v1/auth/register", [
             "username" => "farish",
             "email" => "farish",
@@ -35,7 +35,7 @@ class AuthTest extends TestCase
         ->assertBadRequest();
     }
 
-    function test_register_account_exist() {
+    function testRegisterUserAlreadyExist() {
         $this->post("/api/v1/auth/register", [
             "username" => "admin",
             "email" => "admin@gmail.com",
@@ -44,7 +44,7 @@ class AuthTest extends TestCase
         ->assertUnauthorized();
     }
 
-    function test_login_success() {
+    function testLoginSuccess() {
         $this->post("/api/v1/auth/login", [
             "email" => "farish@gmail.com",
             "password" => "farish"
@@ -52,7 +52,7 @@ class AuthTest extends TestCase
         ->assertOk();
     }
 
-    function test_login_wrong_password() {
+    function testLoginWrongPassword() {
         $this->post("/api/v1/auth/login", [
             "email" => "admin@gmail.com",
             "password" => "salah"
@@ -60,7 +60,7 @@ class AuthTest extends TestCase
         ->assertUnauthorized();
     }
 
-    function test_login_account_not_exist() {
+    function testLoginAccountNotExist() {
         $this->post("/api/v1/auth/login", [
             "email" => "tidakada@gmail.com",
             "password" => "salah"
