@@ -9,6 +9,11 @@ use Tests\TestCase;
 class KomentarTest extends TestCase
 {
     function testCreateKomentar() {
-        
+        $faker = \Faker\Factory::create();
+
+        $this->withHeaders([
+            "Authorization"
+        ])->post("")
+        ->assertCreated();
     }
 }
