@@ -77,9 +77,9 @@ class AuthController extends Controller
 
         // Validasi data
         $request->validate([
-            'username' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($loggedIn->id)],
-            'password' => ['nullable', 'string', 'min:8'],
+            // 'username' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', Rule::unique('users')->ignore($loggedIn->id)],
+            'password' => ['nullable', 'string'],
         ]);
 
         $user = User::find($loggedIn->id);
@@ -91,11 +91,9 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // Update data pengguna
-        $user->username = $request->username;
+        // $user->username = $request->username;
         $user->email = $request->email;
 
-        // Periksa apakah password dikirim dan hash password baru
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }

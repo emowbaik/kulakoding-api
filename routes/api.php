@@ -30,7 +30,7 @@ Route::prefix("/v1")->group(function () {
         Route::post("/register", [AuthController::class, "register"]);
         Route::post("/logout", [AuthController::class, "logout"])->middleware("auth:sanctum");
     });
-    
+
     Route::middleware("auth:sanctum")->group(function () {
         Route::resource("/project", ProjectController::class);
         Route::post("/project/komentar/{id}", [KomentarController::class, "Store"]);
