@@ -16,7 +16,8 @@ use Illuminate\Support\Str;
 class ProjectController extends Controller
 {
     function index() {
-        $projects = Project::all();
+        // $projects = Project::all();
+        $projects = Project::with('image')->get();
     
         return response()->json([
             'data' => $projects,
@@ -38,36 +39,42 @@ class ProjectController extends Controller
 
     }
 
-    function Store(ProjectRequest $request) {
+    function Store(ProjectRequest $request)
+    {
+        try {
+            $user = Auth::user();
 
-        $user = Auth::user();
+            $payload = $request->validated();
+            $payload["user_id"] = $user->id;
 
-        $payload = $request->validated();
+            $project = Project::create($payload);
 
-        $payload["user_id"] = $user->id;
+            $images = [];
 
-        $project = Project::create($payload);
+            foreach ($request->file("image") as $uploadedImage) {
+                $extension = $uploadedImage->extension();
+                $dir = "public/project";
+                $name = Str::random(32) . "." . $extension;
+                $path = $uploadedImage->storeAs($dir, $name, 'public');
 
-        $file = $request->file("image");
+                $images[] = $path;
 
-        foreach ($file as $image) {
-            $extension = $image->extension();
-            $dir = "storage/project";
-            $name = Str::random(32) . "." . $extension;
-            $images = $dir . $name;
+                Image::create([
+                    "project_id" => $project->id,
+                    "image" => $path,
+                ]);
+            }
 
-            $image->move($dir . $name);
-
-            Image::create([
-                "project_id" => $project->id,
-                "image" => $images 
-            ]);
-        };
-
-
-        return response()->json([
-            "message" => "Project berhasil diupload!"
-        ], 201);
+            return response()->json([
+                "message" => "Project berhasil diupload!",
+                "images" => $images,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Terjadi kesalahan saat mengunggah proyek.",
+                "error" => $e->getMessage(),
+            ], 500);
+        }
     }
 
     function Update($id, ProjectRequest $request) {
