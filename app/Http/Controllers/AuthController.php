@@ -80,7 +80,7 @@ class AuthController extends Controller
 
         // Validasi data
         $request->validate([
-            // 'username' => ['nullable', 'string', 'max:255'],
+            'username' => ['nullable', 'string', Rule::unique('users')->ignore($loggedIn->id)],
             'email' => ['nullable', 'email', Rule::unique('users')->ignore($loggedIn->id)],
             'password' => ['nullable', 'string'],
         ]);
@@ -94,7 +94,7 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // $user->username = $request->username;
+        $user->username = $request->username;
         $user->email = $request->email;
 
         if ($request->filled('password')) {

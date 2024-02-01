@@ -15,13 +15,15 @@ use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
-    function Index() {
-        $user = Auth::user();
-
-        $project = Project::where("user_id", $user->id)->get();
-
-        return response()->json($project, 200);
-    }
+    function index() {
+        $projects = Project::all();
+    
+        return response()->json([
+            'data' => $projects,
+            'status' => 'success',
+            'message' => 'Data berhasil diambil',
+        ], 200);
+    }    
 
     function Show($id) {
         $project = Project::firstWhere("id", $id);
@@ -48,19 +50,19 @@ class ProjectController extends Controller
 
         $file = $request->file("image");
 
-        // foreach ($file as $image) {
-        //     $extension = $image->extension();
-        //     $dir = "storage/project";
-        //     $name = Str::random(32) . "." . $extension;
-        //     $images = $dir . $name;
+        foreach ($file as $image) {
+            $extension = $image->extension();
+            $dir = "storage/project";
+            $name = Str::random(32) . "." . $extension;
+            $images = $dir . $name;
 
-        //     $image->move($dir . $name);
+            $image->move($dir . $name);
 
-        //     Image::create([
-        //         "project_id" => $project->id,
-        //         "image" => $images 
-        //     ]);
-        // };
+            Image::create([
+                "project_id" => $project->id,
+                "image" => $images 
+            ]);
+        };
 
 
         return response()->json([
@@ -73,7 +75,6 @@ class ProjectController extends Controller
         $project = Project::firstWhere("id", $id);
 
         $payload = $request->validated();
-
 
         if ($project) {
             if ($project->user_id == $user->id) {
