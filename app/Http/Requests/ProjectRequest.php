@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ProjectRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class ProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user() != null;
     }
 
     /**
@@ -22,12 +24,17 @@ class ProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nama_project" => "required",
-            "image" => "required|image",
-            "deskripsi" => "required",
-            "github" => "required",
-            "user_id" => "required",
-            "tool_id" => "required"
+            "nama_project" => ["required"],
+            "deskripsi" => ["required"],
+            "user_id",
+            "tool_id",
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response([
+            "errors" => $validator->getMessageBag()
+        ], 400));
     }
 }

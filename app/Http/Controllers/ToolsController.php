@@ -2,27 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tools;
 use Illuminate\Http\Request;
 
 class ToolsController extends Controller
 {
     function Index() {
-        
-    }
+        $tools = Tools::all();
 
-    function Store() {
-        
-    }
-
-    function Show() {
-        
-    }
-
-    function Update() {
-        
-    }
-
-    function Destroy()  {
-        
+        return response()->json([
+            "tools" => $tools,
+        ], 200);
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,6 +14,12 @@ class AuthController extends Controller
 {
     function Register(RegisterRequest $request) {
         $payload = $request->validated();
+
+        if (User::firstWhere("email", $payload["email"])) {
+            return response()->json([
+                "message" => "Akun sudah terdaftar"
+            ], 401);
+        }
 
         Hash::make($payload["password"]);
 
@@ -22,20 +30,14 @@ class AuthController extends Controller
         }
     }
 
-    function Login(Request $request) {
-        $validation = Validator::make($request->all(), [
-            "email" => "required|email",
-            "password" => "required" 
-         ]);
- 
-         if ($validation->fails()) {
-             return response()->json($validation->errors(), 401);
-         }
+    function Login(LoginRequest $request) {
 
-         $user = User::firstWhere("email", $request->email);
+        $payload = $request->validated();
+
+         $user = User::firstWhere("email", $payload["email"]);
 
          if ($user) {
-            if (Hash::check($request->password, $user->password)) {
+            if (Hash::check($payload["password"], $user->password)) {
                 $token = $user->createToken("auth_token")->plainTextToken;
 
                 return response()->json([
@@ -53,5 +55,11 @@ class AuthController extends Controller
                 "message" => "Akun tidak terdaftar"
             ], 404);
          }
+    }
+
+    function User() {
+        $user = Auth::user();
+
+        return response()->json($user, 200);
     }
 }
