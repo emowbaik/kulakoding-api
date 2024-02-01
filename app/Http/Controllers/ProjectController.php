@@ -18,13 +18,13 @@ class ProjectController extends Controller
     function Index() {
         $user = Auth::user();
 
-        $project = Project::where("user_id", $user->id)->get();
+        $project = Project::where("user_id", $user->id)->get()->load("Image");
 
         return response()->json($project, 200);
     }
 
     function Show($id) {
-        $project = Project::firstWhere("id", $id);
+        $project = Project::firstWhere("id", $id)->load("Image");
 
         if ($project) {
             return response()->json($project, 200);
@@ -36,31 +36,41 @@ class ProjectController extends Controller
 
     }
 
-    function Store(ProjectRequest $request) {
+    function Store(Request $request) {
+
+        $validation = Validator::make($request->all(), [
+            "nama_project" => "required",
+            "deskripsi" => "required",
+            "image" => "image|file|required"
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json($validation->errors(), 400);
+        }
 
         $user = Auth::user();
 
-        $payload = $request->validated();
-
-        $payload["user_id"] = $user->id;
+        $payload = [
+            "nama_project" => $request->nama_project,
+            "deskripsi" => $request->deskripsi,
+            "user_id" => $user->id,
+            "tool_id" => $request->tool
+        ];
 
         $project = Project::create($payload);
 
-        $file = $request->file("image");
+        $image = $request->file("image");
 
-        // foreach ($file as $image) {
-        //     $extension = $image->extension();
-        //     $dir = "storage/project";
-        //     $name = Str::random(32) . "." . $extension;
-        //     $images = $dir . $name;
-
-        //     $image->move($dir . $name);
-
-        //     Image::create([
-        //         "project_id" => $project->id,
-        //         "image" => $images 
-        //     ]);
-        // };
+            $extension = $image->extension();
+            $dir = "storage/project/";
+            $name = Str::random(32) . '.' . $extension;
+            $foto = $dir . $name;
+            $image->move($dir, $name);
+            
+            Image::create([
+                "project_id" => $project->id,
+                "image" => $foto
+            ]);
 
 
         return response()->json([
