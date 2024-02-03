@@ -53,17 +53,32 @@ class ProjectController extends Controller
 
             foreach ($request->file("image") as $uploadedImage) {
                 $extension = $uploadedImage->extension();
-                $dir = "public/project";
+                $dir = "storage/project/";
                 $name = Str::random(32) . "." . $extension;
-                $path = $uploadedImage->storeAs($dir, $name, 'public');
+                $foto = $dir . $name;
+                $uploadedImage->move($dir, $name);
+                // $path = $uploadedImage->storeAs($dir, $name, 'public');
 
-                $images[] = $path;
+                // $images[] = $path;
 
                 Image::create([
                     "project_id" => $project->id,
-                    "image" => $path,
+                    "image" => $foto,
                 ]);
             }
+
+            // foreach ($request->file('image') as $image) {
+            //     $extension = $image->extension();
+            //     $dir = "storage/wisata/";
+            //     $name = Str::random(32) . '.' . $extension;
+            //     $foto = $dir . $name;
+            //     $image->move($dir, $name);
+
+            //     Image::create([
+            //         "wisata_id" => $wisata->id,
+            //         "gambar" => $foto
+            //     ]);
+            // }
 
             return response()->json([
                 "message" => "Project berhasil diupload!",
