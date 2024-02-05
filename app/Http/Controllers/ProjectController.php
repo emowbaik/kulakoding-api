@@ -16,7 +16,6 @@ use Illuminate\Support\Str;
 class ProjectController extends Controller
 {
     function index() {
-        // $projects = Project::all();
         $projects = Project::with('image')->get();
     
         return response()->json([
@@ -57,28 +56,12 @@ class ProjectController extends Controller
                 $name = Str::random(32) . "." . $extension;
                 $foto = $dir . $name;
                 $uploadedImage->move($dir, $name);
-                // $path = $uploadedImage->storeAs($dir, $name, 'public');
-
-                // $images[] = $path;
 
                 Image::create([
                     "project_id" => $project->id,
                     "image" => $foto,
                 ]);
             }
-
-            // foreach ($request->file('image') as $image) {
-            //     $extension = $image->extension();
-            //     $dir = "storage/wisata/";
-            //     $name = Str::random(32) . '.' . $extension;
-            //     $foto = $dir . $name;
-            //     $image->move($dir, $name);
-
-            //     Image::create([
-            //         "wisata_id" => $wisata->id,
-            //         "gambar" => $foto
-            //     ]);
-            // }
 
             return response()->json([
                 "message" => "Project berhasil diupload!",
