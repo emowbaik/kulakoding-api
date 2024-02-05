@@ -14,11 +14,9 @@ use Illuminate\Support\Str;
 class ProjectController extends Controller
 {
     function Index() {
-        $user = Auth::user();
+        $data = Project::with("image")->paginate(6);
 
-        $project = Project::where("user_id". $user->id)->get();
-
-        return response()->json($project, 200);
+        return $data;
     }
 
     function Show($id) {
@@ -78,5 +76,11 @@ class ProjectController extends Controller
         return response()->json([
             "message" => "Data berhasil dihapus"
         ], 200);
+    }
+
+    function PaginateIndex()  {
+        $data = Project::paginate(2);
+
+        return $data;
     }
 }
