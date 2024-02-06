@@ -15,17 +15,19 @@ use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
-    function index() {
-        $projects = Project::with('image')->get();
-    
+    function index()
+    {
+        $projects = Project::with('image')->limit(3)->get();
+
         return response()->json([
             'data' => $projects,
             'status' => 'success',
             'message' => 'Data berhasil diambil',
         ], 200);
-    }    
+    }
 
-    function Show($id) {
+    function Show($id)
+    {
         $project = Project::firstWhere("id", $id);
 
         if ($project) {
@@ -75,7 +77,8 @@ class ProjectController extends Controller
         }
     }
 
-    function Update($id, ProjectRequest $request) {
+    function Update($id, ProjectRequest $request)
+    {
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
@@ -84,7 +87,7 @@ class ProjectController extends Controller
         if ($project) {
             if ($project->user_id == $user->id) {
                 $project->update($payload);
-                        
+
                 return response()->json([
                     "message" => "Data berhasil diupdate!"
                 ], 200);
@@ -100,7 +103,8 @@ class ProjectController extends Controller
         }
     }
 
-    function Destroy($id) {
+    function Destroy($id)
+    {
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
@@ -108,7 +112,7 @@ class ProjectController extends Controller
             $komentar = Komentar::where("project_id", $id);
             $komentar->delete();
             $project->delete();
-    
+
             return response()->json([
                 "message" => "Data berhasil dihapus"
             ], 200);
