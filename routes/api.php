@@ -42,6 +42,7 @@ Route::prefix("/v1")->group(function () {
 
         Route::prefix("/admin")->group(function (){
             Route::resource("project", AdminProjectController::class);
+            Route::get("/allProject", [AdminProjectController::class, "AllProject"]);
             Route::resource("user", UserController::class);
         });
     });

@@ -11,10 +11,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\alert;
+
 class ProjectController extends Controller
 {
     function Index() {
         $data = Project::with("image")->paginate(6);
+
+        return $data;
+    }
+
+    function AllProject() {
+        $data = Project::all();
 
         return $data;
     }

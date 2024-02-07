@@ -24,7 +24,7 @@ class ProjectController extends Controller
     }
 
     function Show($id) {
-        $project = Project::firstWhere("id", $id)->load("Image");
+        $project = Project::firstWhere("id", $id)->load(["Image", "User"]);
 
         if ($project) {
             return response()->json($project, 200);
