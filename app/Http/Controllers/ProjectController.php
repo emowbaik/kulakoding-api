@@ -17,7 +17,7 @@ class ProjectController extends Controller
 {
     function index()
     {
-        $projects = Project::with('image')->limit(3)->get();
+        $projects = Project::with('image')->get();
 
         return response()->json([
             'data' => $projects,
