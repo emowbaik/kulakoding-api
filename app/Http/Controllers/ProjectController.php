@@ -17,18 +17,18 @@ class ProjectController extends Controller
 {
     function index()
     {
-        $projects = Project::with('image')->get();
+        $user = Auth::user();
+        $project = Project::where("user_id", $user->id)->get()->load("Image");
 
         return response()->json([
-            'data' => $projects,
+            'data' => $project,
             'status' => 'success',
             'message' => 'Data berhasil diambil',
         ], 200);
     }
 
-    function Show($id)
-    {
-        $project = Project::firstWhere("id", $id);
+    function Show($id) {
+        $project = Project::firstWhere("id", $id)->load("Image");
 
         if ($project) {
             return response()->json($project, 200);
