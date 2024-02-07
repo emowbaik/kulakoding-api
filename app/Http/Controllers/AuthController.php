@@ -109,4 +109,10 @@ class AuthController extends Controller
             'data' => $user,
         ], 200);
     }
+
+    function User() {
+        $user = Auth::user();
+
+        return response()->json($user, 200);
+    }
 }

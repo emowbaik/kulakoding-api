@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ToolsController;
 use App\Http\Requests\KomentarRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,8 @@ Route::prefix("/v1")->group(function () {
     });
 
     Route::middleware("auth:sanctum")->group(function () {
+        Route::get("/user", [AuthController::class, "User"]);
+        Route::resource('/tool', ToolsController::class);
         Route::resource("/project", ProjectController::class);
         Route::post("/project/komentar/{id}", [KomentarController::class, "Store"]);
         Route::delete("/project/komentar/{id}/{komentar:id}", [KomentarController::class, "destroy"]);

@@ -29,4 +29,16 @@ class UserController extends Controller
             "message" => "User telah berhasil diverifikasi"
         ], 200);
     }
+
+    function Destroy($id) {
+        $user = User::firstWhere("id", $id);
+
+        if ($user) {
+            $user->delete();
+
+            return response()->json([
+                "message" => "Data berhasil dihapus"
+            ], 200);
+        }
+    }
 }
