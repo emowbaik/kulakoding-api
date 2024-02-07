@@ -15,9 +15,9 @@ use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
-    function index()
-    {
+    function Index() {
         $user = Auth::user();
+
         $project = Project::where("user_id", $user->id)->get()->load("Image");
 
         return response()->json([
@@ -40,17 +40,27 @@ class ProjectController extends Controller
 
     }
 
-    function Store(ProjectRequest $request)
-    {
-        try {
-            $user = Auth::user();
+    function Store(Request $request) {
+
+        $validation = Validator::make($request->all(), [
+            "nama_project" => "required",
+            "deskripsi" => "required",
+            "image" => "image|file|required"
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json($validation->errors(), 400);
+        }
 
             $payload = $request->validated();
             $payload["user_id"] = $user->id;
 
-            $project = Project::create($payload);
-
-            $images = [];
+        $payload = [
+            "nama_project" => $request->nama_project,
+            "deskripsi" => $request->deskripsi,
+            "user_id" => $user->id,
+            "tool_id" => $request->tool
+        ];
 
             foreach ($request->file("image") as $uploadedImage) {
                 $extension = $uploadedImage->extension();
@@ -59,11 +69,19 @@ class ProjectController extends Controller
                 $foto = $dir . $name;
                 $uploadedImage->move($dir, $name);
 
-                Image::create([
-                    "project_id" => $project->id,
-                    "image" => $foto,
-                ]);
-            }
+        $image = $request->file("image");
+
+            $extension = $image->extension();
+            $dir = "storage/project/";
+            $name = Str::random(32) . '.' . $extension;
+            $foto = $dir . $name;
+            $image->move($dir, $name);
+            
+            Image::create([
+                "project_id" => $project->id,
+                "image" => $foto
+            ]);
+
 
             return response()->json([
                 "message" => "Project berhasil diupload!",
@@ -77,17 +95,17 @@ class ProjectController extends Controller
         }
     }
 
-    function Update($id, ProjectRequest $request)
-    {
+    function Update($id, ProjectRequest $request) {
         $user = Auth::user();
         $project = Project::firstWhere("id", $id);
 
         $payload = $request->validated();
 
+
         if ($project) {
             if ($project->user_id == $user->id) {
                 $project->update($payload);
-
+                        
                 return response()->json([
                     "message" => "Data berhasil diupdate!"
                 ], 200);
