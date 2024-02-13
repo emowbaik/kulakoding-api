@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ToolsController;
+use App\Http\Controllers\UserController as ControllersUserController;
 use App\Http\Requests\KomentarRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +44,13 @@ Route::prefix("/v1")->group(function () {
 
         Route::prefix("/admin")->group(function (){
             Route::resource("project", AdminProjectController::class);
+            // route untuk searching
+            Route::get("/allProject", [AdminProjectController::class, "AllProject"]);
             Route::resource("user", UserController::class);
+        });
+
+        Route::prefix("/user")->group(function () {
+            Route::resource('/project', ControllersUserController::class);
         });
     });
 });

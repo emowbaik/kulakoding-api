@@ -11,14 +11,20 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\alert;
+
 class ProjectController extends Controller
 {
     function Index() {
-        $user = Auth::user();
+        $data = Project::with("image")->paginate(6);
 
-        $project = Project::where("user_id". $user->id)->get();
+        return $data;
+    }
 
-        return response()->json($project, 200);
+    function AllProject() {
+        $data = Project::all();
+
+        return $data;
     }
 
     function Show($id) {
@@ -78,5 +84,10 @@ class ProjectController extends Controller
         return response()->json([
             "message" => "Data berhasil dihapus"
         ], 200);
+    }
+    function PaginateIndex()  {
+        $data = Project::paginate(2);
+
+        return $data;
     }
 }

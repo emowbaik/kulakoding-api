@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->integer("isVerified")->default(0);
+            $table->string("kelas");
             $table->enum("role", ["admin", "user"])->default("user");
             $table->string('email')->unique();
             $table->string('password');
